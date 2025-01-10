@@ -184,19 +184,26 @@ async function addData(name: string, age: number) {
       };
     }
 
-    const response = await axios.post(
-      "https://dahua.metcfire.com.tw/api/CRUDTest",
-      params.value
-    );
-
-    if (response) {
-      if (isEditing.value) {
+    if (isEditing.value) {
+      const response = await axios.patch(
+        "https://dahua.metcfire.com.tw/api/CRUDTest",
+        params.value
+      );
+      if (response) {
         isEditing.value = false;
         $toast.success("修改成功");
-      } else {
-        $toast.success("新增成功");
+
+        query();
       }
-      query();
+    } else {
+      const response = await axios.post(
+        "https://dahua.metcfire.com.tw/api/CRUDTest",
+        params.value
+      );
+      if (response) {
+        $toast.success("新增成功");
+        query();
+      }
     }
 
     tempData.value.name = "";
@@ -215,6 +222,7 @@ async function handleClickOption(btn, data) {
     isEditing.value = true;
     tempData.value.name = data.name;
     tempData.value.age = data.age;
+    tempData.value.id = data.id;
   } else if (btn.status === "delete") {
     if (confirm(`確定要刪除${data.name}嗎?`)) {
       try {
